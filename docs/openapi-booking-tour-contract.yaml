@@ -1,0 +1,669 @@
+openapi: 3.1.0
+info:
+  title: Egypt Tourism Platform - Tours & Bookings API
+  version: 1.0.0
+  summary: Development contract for frontend integration of tour discovery and booking flows.
+  description: |
+    This OpenAPI contract covers all Tour and Booking endpoints that the frontend team
+    (Codex Cloud and Codex CLI) should integrate against.
+servers:
+  - url: https://api.egypttours.com/api/v1
+    description: Production
+  - url: https://staging-api.egypttours.com/api/v1
+    description: Staging
+  - url: http://localhost:3000/api/v1
+    description: Local development
+security:
+  - bearerAuth: []
+tags:
+  - name: Tours
+  - name: Bookings
+paths:
+  /tours:
+    get:
+      tags: [Tours]
+      summary: List tours
+      description: Public endpoint for listing tours with optional filters and pagination.
+      security: []
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1, default: 1 }
+        - in: query
+          name: pageSize
+          schema: { type: integer, minimum: 1, maximum: 100, default: 12 }
+        - in: query
+          name: category
+          schema:
+            $ref: '#/components/schemas/TourCategory'
+        - in: query
+          name: minPrice
+          schema: { type: number, format: decimal, minimum: 0 }
+        - in: query
+          name: maxPrice
+          schema: { type: number, format: decimal, minimum: 0 }
+        - in: query
+          name: durationMin
+          schema: { type: integer, minimum: 1 }
+        - in: query
+          name: durationMax
+          schema: { type: integer, minimum: 1 }
+        - in: query
+          name: search
+          schema: { type: string, maxLength: 100 }
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [price_asc, price_desc, duration_asc, duration_desc, newest]
+            default: newest
+      responses:
+        '200':
+          description: A paginated list of tours.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourListResponse'
+    post:
+      tags: [Tours]
+      summary: Create tour
+      description: Admin-only endpoint to create a new tour.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTourRequest'
+      responses:
+        '201':
+          description: Tour created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /tours/{tourId}:
+    get:
+      tags: [Tours]
+      summary: Get tour by ID
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/TourIdPath'
+      responses:
+        '200':
+          description: Tour details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    patch:
+      tags: [Tours]
+      summary: Update tour
+      parameters:
+        - $ref: '#/components/parameters/TourIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTourRequest'
+      responses:
+        '200':
+          description: Tour updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      tags: [Tours]
+      summary: Delete tour
+      parameters:
+        - $ref: '#/components/parameters/TourIdPath'
+      responses:
+        '204':
+          description: Tour deleted.
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /tours/slug/{slug}:
+    get:
+      tags: [Tours]
+      summary: Get tour by slug
+      security: []
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Tour details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /tours/{tourId}/availability:
+    get:
+      tags: [Tours]
+      summary: Get tour availability calendar
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/TourIdPath'
+        - in: query
+          name: month
+          required: true
+          schema:
+            type: string
+            pattern: '^\\d{4}-(0[1-9]|1[0-2])$'
+            example: '2026-04'
+      responses:
+        '200':
+          description: Availability entries for the requested month.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourAvailabilityResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /bookings:
+    get:
+      tags: [Bookings]
+      summary: List bookings
+      description: Admin-only endpoint to list bookings with status and date filters.
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1, default: 1 }
+        - in: query
+          name: pageSize
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/BookingStatus'
+        - in: query
+          name: tourId
+          schema: { type: string, format: uuid }
+        - in: query
+          name: fromDate
+          schema: { type: string, format: date }
+        - in: query
+          name: toDate
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: A paginated list of bookings.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+    post:
+      tags: [Bookings]
+      summary: Create booking
+      description: Public endpoint to submit a booking request.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookingRequest'
+      responses:
+        '201':
+          description: Booking created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /bookings/{bookingId}:
+    get:
+      tags: [Bookings]
+      summary: Get booking by ID
+      description: Admin-only endpoint.
+      parameters:
+        - $ref: '#/components/parameters/BookingIdPath'
+      responses:
+        '200':
+          description: Booking details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /bookings/{bookingId}/status:
+    patch:
+      tags: [Bookings]
+      summary: Update booking status
+      description: Admin-only endpoint.
+      parameters:
+        - $ref: '#/components/parameters/BookingIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  $ref: '#/components/schemas/BookingStatus'
+      responses:
+        '200':
+          description: Booking status updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /bookings/{bookingId}/cancel:
+    post:
+      tags: [Bookings]
+      summary: Cancel booking
+      description: Public endpoint used by customers to cancel a pending/confirmed booking.
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/BookingIdPath'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  maxLength: 500
+      responses:
+        '200':
+          description: Booking cancelled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    TourIdPath:
+      in: path
+      name: tourId
+      required: true
+      schema:
+        type: string
+        format: uuid
+    BookingIdPath:
+      in: path
+      name: bookingId
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    ValidationError:
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    UnauthorizedError:
+      description: Authentication is required.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ForbiddenError:
+      description: Insufficient permissions.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFoundError:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    TourCategory:
+      type: string
+      enum:
+        - CULTURAL
+        - ADVENTURE
+        - LUXURY
+        - FAMILY
+        - DESERT
+        - NILE_CRUISE
+        - DAY_TRIP
+        - OTHER
+
+    BookingStatus:
+      type: string
+      enum:
+        - PENDING
+        - CONFIRMED
+        - CANCELLED
+        - COMPLETED
+
+    Tour:
+      type: object
+      required:
+        - id
+        - slug
+        - title
+        - description
+        - duration
+        - price
+        - images
+        - category
+        - availabilityRules
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        duration:
+          type: integer
+          minimum: 1
+          description: Duration in days.
+        price:
+          type: string
+          pattern: '^\\d+(\\.\\d{1,2})?$'
+          example: '299.99'
+        images:
+          type: array
+          items: { type: string, format: uri }
+        category:
+          $ref: '#/components/schemas/TourCategory'
+        availabilityRules:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateTourRequest:
+      type: object
+      required:
+        - slug
+        - title
+        - description
+        - duration
+        - price
+        - images
+        - category
+        - availabilityRules
+      properties:
+        slug: { type: string }
+        title: { type: string }
+        description: { type: string }
+        duration: { type: integer, minimum: 1 }
+        price:
+          type: string
+          pattern: '^\\d+(\\.\\d{1,2})?$'
+        images:
+          type: array
+          minItems: 1
+          items: { type: string, format: uri }
+        category:
+          $ref: '#/components/schemas/TourCategory'
+        availabilityRules:
+          type: object
+          additionalProperties: true
+
+    UpdateTourRequest:
+      type: object
+      properties:
+        slug: { type: string }
+        title: { type: string }
+        description: { type: string }
+        duration: { type: integer, minimum: 1 }
+        price:
+          type: string
+          pattern: '^\\d+(\\.\\d{1,2})?$'
+        images:
+          type: array
+          items: { type: string, format: uri }
+        category:
+          $ref: '#/components/schemas/TourCategory'
+        availabilityRules:
+          type: object
+          additionalProperties: true
+
+    Booking:
+      type: object
+      required:
+        - id
+        - tourId
+        - customerName
+        - email
+        - phone
+        - travelDate
+        - partySize
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        tourId:
+          type: string
+          format: uuid
+        customerName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        whatsapp:
+          type: string
+          nullable: true
+        travelDate:
+          type: string
+          format: date
+        partySize:
+          type: integer
+          minimum: 1
+        status:
+          $ref: '#/components/schemas/BookingStatus'
+        notes:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateBookingRequest:
+      type: object
+      required:
+        - tourId
+        - customerName
+        - email
+        - phone
+        - travelDate
+        - partySize
+      properties:
+        tourId:
+          type: string
+          format: uuid
+        customerName:
+          type: string
+          minLength: 2
+          maxLength: 120
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+          minLength: 6
+          maxLength: 30
+        whatsapp:
+          type: string
+          minLength: 6
+          maxLength: 30
+        travelDate:
+          type: string
+          format: date
+        partySize:
+          type: integer
+          minimum: 1
+          maximum: 100
+        notes:
+          type: string
+          maxLength: 1500
+
+    TourResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/Tour'
+
+    TourListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tour'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    AvailabilityEntry:
+      type: object
+      required: [date, status]
+      properties:
+        date:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [AVAILABLE, LIMITED, FULL, NOT_OPERATING]
+        spotsRemaining:
+          type: integer
+          minimum: 0
+          nullable: true
+
+    TourAvailabilityResponse:
+      type: object
+      required: [tourId, month, availability]
+      properties:
+        tourId:
+          type: string
+          format: uuid
+        month:
+          type: string
+          example: '2026-04'
+        availability:
+          type: array
+          items:
+            $ref: '#/components/schemas/AvailabilityEntry'
+
+    BookingResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/Booking'
+
+    BookingListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Booking'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    PaginationMeta:
+      type: object
+      required: [page, pageSize, totalItems, totalPages]
+      properties:
+        page: { type: integer, minimum: 1 }
+        pageSize: { type: integer, minimum: 1 }
+        totalItems: { type: integer, minimum: 0 }
+        totalPages: { type: integer, minimum: 0 }
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+              additionalProperties: true
+              nullable: true
