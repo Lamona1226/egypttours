@@ -1,0 +1,83 @@
+name: Review CI/CD and deployment configs
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - '.github/workflows/**/*.yml'
+      - '.github/workflows/**/*.yaml'
+      - 'infrastructure/**/*.yml'
+      - 'infrastructure/**/*.yaml'
+      - 'infrastructure/**/Dockerfile*'
+      - '**/Dockerfile*'
+  workflow_dispatch:
+
+jobs:
+  review-configs:
+    name: Validate pipeline and deployment configuration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate YAML syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -t yaml_files < <(find .github/workflows infrastructure -type f \( -name '*.yml' -o -name '*.yaml' \) 2>/dev/null || true)
+
+          if [ "${#yaml_files[@]}" -eq 0 ]; then
+            echo "No YAML files found in workflow/deployment paths."
+            exit 0
+          fi
+
+          for file in "${yaml_files[@]}"; do
+            ruby -e "require 'yaml'; YAML.safe_load(File.read(ARGV[0]), aliases: true)" "$file"
+            echo "Validated YAML: $file"
+          done
+
+      - name: Check deployment environment variables are documented
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ ! -f infrastructure/docker-compose.yml ]; then
+            echo "infrastructure/docker-compose.yml not found; skipping env var check."
+            exit 0
+          fi
+
+          if [ ! -f infrastructure/.env.example ]; then
+            echo "Missing infrastructure/.env.example"
+            exit 1
+          fi
+
+          mapfile -t used_vars < <(grep -oE '\$\{[A-Za-z_][A-Za-z0-9_]*' infrastructure/docker-compose.yml | tr -d '${' | sort -u)
+          missing=()
+
+          for key in "${used_vars[@]}"; do
+            if ! grep -qE "^${key}=" infrastructure/.env.example; then
+              missing+=("$key")
+            fi
+          done
+
+          if [ "${#missing[@]}" -gt 0 ]; then
+            echo "Missing environment variables in infrastructure/.env.example:"
+            printf ' - %s\n' "${missing[@]}"
+            exit 1
+          fi
+
+          echo "All docker-compose variables are documented in infrastructure/.env.example"
+
+      - name: CI/CD and deployment review reminder
+        run: |
+          {
+            echo "### CI/CD + Deployment review complete"
+            echo ""
+            echo "- ✅ Workflow/deployment YAML syntax validated"
+            echo "- ✅ Deployment variables verified against infrastructure/.env.example"
+            echo "- ℹ️ Ensure at least one reviewer inspects CI/CD and deployment changes before merge"
+          } >> "$GITHUB_STEP_SUMMARY"
