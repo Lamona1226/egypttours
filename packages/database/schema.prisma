@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TourCategory {
+  CULTURAL
+  ADVENTURE
+  LUXURY
+  FAMILY
+  DESERT
+  NILE_CRUISE
+  DAY_TRIP
+  OTHER
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model Tour {
+  id                String              @id @default(uuid()) @db.Uuid
+  slug              String              @unique
+  title             String
+  description       String
+  duration          Int
+  price             Decimal             @db.Decimal(10, 2)
+  images            String[]
+  category          TourCategory
+  availabilityRules Json                @map("availability_rules")
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+
+  bookings          Booking[]
+  testimonials      Testimonial[]
+  packageLinks      TourPackageTour[]
+
+  @@index([category])
+  @@map("tours")
+}
+
+model TourPackage {
+  id             String            @id @default(uuid()) @db.Uuid
+  slug           String            @unique
+  title          String
+  days           Int
+  accommodation  String
+  pricePerPerson Decimal           @map("price_per_person") @db.Decimal(10, 2)
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+
+  includedTours  TourPackageTour[]
+
+  @@map("tour_packages")
+}
+
+model TourPackageTour {
+  id            String      @id @default(uuid()) @db.Uuid
+  tourPackageId String      @map("tour_package_id") @db.Uuid
+  tourId        String      @map("tour_id") @db.Uuid
+  sortOrder     Int         @default(0) @map("sort_order")
+
+  tourPackage   TourPackage @relation(fields: [tourPackageId], references: [id], onDelete: Cascade)
+  tour          Tour        @relation(fields: [tourId], references: [id], onDelete: Restrict)
+
+  @@unique([tourPackageId, tourId])
+  @@index([tourId])
+  @@map("tour_package_tours")
+}
+
+model Booking {
+  id           String        @id @default(uuid()) @db.Uuid
+  tourId       String        @map("tour_id") @db.Uuid
+  customerName String        @map("customer_name")
+  email        String
+  phone        String
+  whatsapp     String?
+  travelDate   DateTime      @map("travel_date") @db.Date
+  partySize    Int           @map("party_size")
+  status       BookingStatus @default(PENDING)
+  notes        String?
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  tour         Tour          @relation(fields: [tourId], references: [id], onDelete: Restrict)
+
+  @@index([tourId, travelDate])
+  @@index([status])
+  @@map("bookings")
+}
+
+model BlogPost {
+  id          String    @id @default(uuid()) @db.Uuid
+  slug        String    @unique
+  title       String
+  content     String
+  author      String
+  publishedAt DateTime? @map("published_at")
+  tags        String[]
+  coverImage  String?   @map("cover_image")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([publishedAt])
+  @@map("blog_posts")
+}
+
+model Testimonial {
+  id        String   @id @default(uuid()) @db.Uuid
+  author    String
+  rating    Int
+  text      String
+  tourId    String?  @map("tour_id") @db.Uuid
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  tour      Tour?    @relation(fields: [tourId], references: [id], onDelete: SetNull)
+
+  @@index([tourId])
+  @@index([approved, createdAt])
+  @@map("testimonials")
+}
+
+model ContactEnquiry {
+  id          String    @id @default(uuid()) @db.Uuid
+  name        String
+  email       String
+  subject     String
+  message     String
+  respondedAt DateTime? @map("responded_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("contact_enquiries")
+}
