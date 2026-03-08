@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum TourCategory {
+  HISTORICAL
+  ADVENTURE
+  NILE_CRUISE
+  DESERT
+  CULTURAL
+  BEACH
+}
+
+model Tour {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  title            String
+  titleAr          String
+  description      String
+  descriptionAr    String
+  category         TourCategory
+  durationHours    Int
+  pricePerPerson   Float
+  maxGroupSize     Int
+  images           String[]
+  includedItems    String[]
+  excludedItems    String[]
+  meetingPoint     String
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  bookings         Booking[]
+  availability     Availability[]
+}
+
+model TourPackage {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  title            String
+  titleAr          String
+  description      String
+  descriptionAr    String
+  durationDays     Int
+  pricePerPerson   Float
+  maxGroupSize     Int
+  images           String[]
+  includedItems    String[]
+  excludedItems    String[]
+  accommodation    String
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  bookings         Booking[]
+}
+
+model Booking {
+  id               String        @id @default(cuid())
+  tourId           String?
+  packageId        String?
+  customerName     String
+  email            String
+  phone            String
+  whatsapp         String
+  travelDate       DateTime
+  partySize        Int
+  specialRequests  String?
+  status           BookingStatus @default(PENDING)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  tour             Tour?         @relation(fields: [tourId], references: [id])
+  package          TourPackage?  @relation(fields: [packageId], references: [id])
+}
+
+model Availability {
+  id               String        @id @default(cuid())
+  tourId           String
+  date             DateTime
+  spotsTotal       Int
+  spotsBooked      Int           @default(0)
+  isBlocked        Boolean       @default(false)
+  tour             Tour          @relation(fields: [tourId], references: [id])
+}
+
+model BlogPost {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  title            String
+  titleAr          String
+  content          String
+  contentAr        String
+  author           String
+  coverImage       String
+  tags             String[]
+  published        Boolean       @default(false)
+  publishedAt      DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model Testimonial {
+  id               String        @id @default(cuid())
+  authorName       String
+  country          String
+  rating           Int
+  text             String
+  tourId           String?
+  approved         Boolean       @default(false)
+  createdAt        DateTime      @default(now())
+}
+
+model ContactEnquiry {
+  id               String        @id @default(cuid())
+  name             String
+  email            String
+  phone            String?
+  subject          String
+  message          String
+  respondedAt      DateTime?
+  createdAt        DateTime      @default(now())
+}
