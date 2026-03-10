@@ -5,22 +5,17 @@ import WhyChooseUs from '@/components/home/WhyChooseUs';
 import TestimonialsPreview from '@/components/home/TestimonialsPreview';
 
 export const metadata: Metadata = {
-  title: 'Home | Egypt Tourism',
-  description: 'Explore Egypt tours, packages, and authentic travel experiences.'
+  title: 'Home | Egypt Tours',
+  description: 'Expert-guided tours from Cairo to Aswan. Pay only when you arrive in Egypt.',
 };
 
-const featured = [
-  { id: '1', slug: 'giza-pyramids', title: 'Giza Pyramids Tour', description: 'Explore the pyramids and Sphinx.', pricePerPerson: 85, durationHours: 8 },
-  { id: '2', slug: 'luxor-east-bank', title: 'Luxor East Bank', description: 'Visit Karnak and Luxor Temple.', pricePerPerson: 95, durationHours: 7 }
-];
-
-export default function Page(): JSX.Element {
+export default function Page() {
   return (
-    <div className="space-y-10">
+    <>
       <HeroSection />
-      <FeaturedTours tours={featured} />
+      <FeaturedTours />
       <WhyChooseUs />
       <TestimonialsPreview />
-    </div>
+    </>
   );
 }

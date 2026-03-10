@@ -5,6 +5,8 @@ export interface Tour {
   description: string;
   pricePerPerson: number;
   durationHours: number;
+  category?: string;
+  images?: string[];
 }
 
 export interface TourPackage {
