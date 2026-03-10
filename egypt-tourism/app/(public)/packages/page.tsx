@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Bed, Clock, Tag } from 'lucide-react';
+import { Bed, Tag } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Multi-Day Tour Packages | Egypt Tours',
