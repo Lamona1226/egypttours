@@ -7,9 +7,8 @@ export default function FloatingBookButton() {
   return (
     <Link
       href="/custom-tour"
-      className="fixed bottom-8 right-8 z-50 flex flex-col items-center justify-center rounded-full shadow-2xl transition-transform duration-300 hover:scale-110 active:scale-95"
+      className="fixed bottom-8 right-8 z-50 flex flex-col items-center justify-center rounded-full shadow-2xl transition-transform duration-300 hover:scale-110 active:scale-95 bg-[#108E81] hover:bg-[#134645] shadow-[#108E81]/40"
       style={{
-        backgroundColor: '#C9A84C',
         width: '80px',
         height: '80px',
       }}

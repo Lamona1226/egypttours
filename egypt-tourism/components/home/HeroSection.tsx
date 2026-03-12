@@ -1,6 +1,11 @@
+'use client';
+
 import Link from 'next/link';
+import {useTranslations} from 'next-intl';
 
 export default function HeroSection() {
+  const t = useTranslations('hero');
+
   return (
     <section className="relative flex min-h-screen items-center justify-center bg-slate-800">
       <video
@@ -12,29 +17,29 @@ export default function HeroSection() {
       >
         <source src="/videos/hero.mp4" type="video/mp4" />
       </video>
-      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-[#134645]/70" />
 
       <div className="relative z-10 mx-auto max-w-3xl px-4 text-center">
         <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
-          Discover the Magic of Ancient Egypt
+          {t('title')}
         </h1>
-        <p className="mx-auto mt-6 max-w-xl text-lg text-gray-200">
-          Expert-guided tours from Cairo to Aswan. Pay only when you arrive in Egypt.
+        <p className="mx-auto mt-6 max-w-xl text-lg text-[#D2C6B8]">
+          {t('subtitle')}
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link
             href="/tours"
-            className="rounded-md px-8 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-            style={{ backgroundColor: '#C9A84C' }}
+            className="rounded-md px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#277971]"
+            style={{ backgroundColor: '#108E81' }}
           >
-            Explore Tours
+            {t('cta_primary')}
           </Link>
           <Link
             href="/packages"
-            className="rounded-md border-2 px-8 py-3 text-sm font-semibold transition-colors hover:bg-[#C9A84C] hover:text-white"
-            style={{ borderColor: '#C9A84C', color: '#C9A84C' }}
+            className="rounded-md border-2 px-8 py-3 text-sm font-semibold transition-colors hover:bg-[#BBA27E] hover:text-[#134645]"
+            style={{ borderColor: '#BBA27E', color: '#BBA27E' }}
           >
-            View Packages
+            {t('cta_secondary')}
           </Link>
         </div>
       </div>

@@ -69,11 +69,11 @@ export default function SearchBar() {
       <div
         className={`flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-200 ${
           focused
-            ? 'w-72 border-[#C9A84C] bg-white shadow-sm'
+            ? 'w-72 border-[#108E81] bg-white shadow-sm'
             : 'w-56 border-transparent bg-gray-100'
         }`}
       >
-        <Search className="h-4 w-4 shrink-0 text-gray-400" />
+        <Search className="h-4 w-4 shrink-0 text-[#53685E]" />
         <input
           type="text"
           value={query}
@@ -93,19 +93,19 @@ export default function SearchBar() {
       </div>
 
       {open && results.length > 0 && (
-        <div className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl">
+        <div className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-xl border border-[#96A69E] bg-white shadow-xl">
           {results.map((tour) => (
             <button
               key={tour.slug}
               onMouseDown={() => handleSelect(tour.slug, tour.category)}
-              className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-amber-50"
+              className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-[#F5F0EC]"
             >
-              <span className="text-sm font-medium text-gray-800">
+              <span className="text-sm font-medium text-[#134645]">
                 {tour.title}
               </span>
               <span
                 className="ml-2 shrink-0 rounded-full px-2 py-0.5 text-xs font-medium text-white"
-                style={{ backgroundColor: '#C9A84C' }}
+                style={{ backgroundColor: '#108E81' }}
               >
                 {tour.category}
               </span>
@@ -115,7 +115,7 @@ export default function SearchBar() {
       )}
 
       {open && query.trim().length > 0 && results.length === 0 && (
-        <div className="absolute right-0 top-12 z-50 w-80 rounded-xl border border-gray-100 bg-white px-4 py-4 text-center shadow-xl">
+        <div className="absolute right-0 top-12 z-50 w-80 rounded-xl border border-[#96A69E] bg-white px-4 py-4 text-center shadow-xl">
           <p className="text-sm text-gray-400">
             No tours found for &ldquo;{query}&rdquo;
           </p>

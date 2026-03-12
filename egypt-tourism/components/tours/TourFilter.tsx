@@ -1,44 +1,71 @@
 'use client';
-import { useState } from 'react';
+
+import {useState, useEffect, Suspense} from 'react';
+import {useRouter, useSearchParams, usePathname} from 'next/navigation';
+import {useTranslations} from 'next-intl';
 
 const categories = [
-  'All',
-  'Historical',
-  'Adventure',
-  'Cultural',
-  'Desert',
-  'Beach',
-  'Nile Cruise',
+  {value: 'All', key: 'filter_all'},
+  {value: 'Historical', key: 'filter_historical'},
+  {value: 'Adventure', key: 'filter_adventure'},
+  {value: 'Cultural', key: 'filter_cultural'},
+  {value: 'Desert', key: 'filter_desert'},
+  {value: 'Beach', key: 'filter_beach'},
+  {value: 'Nile Cruise', key: 'filter_nile'},
 ];
 
-interface TourFilterProps {
-  onFilterChange: (category: string) => void;
-}
-
-export default function TourFilter({ onFilterChange }: TourFilterProps) {
+function FilterButtons() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const t = useTranslations('tours');
   const [active, setActive] = useState('All');
+
+  useEffect(() => {
+    setActive(searchParams.get('category') || 'All');
+  }, [searchParams]);
 
   function handleClick(category: string) {
     setActive(category);
-    onFilterChange(category);
+    if (category === 'All') {
+      router.push(pathname, { scroll: false });
+    } else {
+      router.push(`${pathname}?category=${category}`, { scroll: false });
+    }
+    
+    // Smooth scroll to the grid
+    const target = document.getElementById('tour-grid');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
   return (
     <div className="flex flex-wrap gap-2">
       {categories.map((cat) => (
         <button
-          key={cat}
-          onClick={() => handleClick(cat)}
+          key={cat.value}
+          onClick={() => handleClick(cat.value)}
+          aria-pressed={active === cat.value}
+          aria-label={`Filter by ${cat.value} tours`}
           className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
-            active === cat
+            active === cat.value
               ? 'text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              : 'bg-[#F5F0EC] text-[#53685E] hover:bg-[#D2C6B8]'
           }`}
-          style={active === cat ? { backgroundColor: '#C9A84C' } : undefined}
+          style={active === cat.value ? {backgroundColor: '#108E81'} : undefined}
         >
-          {cat}
+          {t(cat.key)}
         </button>
       ))}
     </div>
+  );
+}
+
+export default function TourFilter() {
+  return (
+    <Suspense fallback={<div className="h-10 animate-pulse bg-[#F5F0EC] rounded-full" />}>
+      <FilterButtons />
+    </Suspense>
   );
 }

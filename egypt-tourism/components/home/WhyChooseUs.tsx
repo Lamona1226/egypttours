@@ -25,10 +25,10 @@ const features = [
 
 export default function WhyChooseUs() {
   return (
-    <section className="bg-gray-50 py-16">
+    <section className="bg-[#F5F0EC] py-16">
       <div className="mx-auto max-w-6xl px-4">
-        <h2 className="text-center text-3xl font-bold text-gray-900">Why Choose Us</h2>
-        <p className="mx-auto mt-3 max-w-xl text-center text-gray-500">
+        <h2 className="text-center text-3xl font-bold text-[#134645]">Why Choose Us</h2>
+        <p className="mx-auto mt-3 max-w-xl text-center text-[#53685E]">
           Trusted by travelers from over 50 countries
         </p>
 
@@ -36,16 +36,15 @@ export default function WhyChooseUs() {
           {features.map(({ icon: Icon, title, description }) => (
             <div
               key={title}
-              className="rounded-xl border border-gray-100 bg-white p-6 text-center shadow-sm transition-shadow hover:shadow-md"
+              className="rounded-xl border border-[#D2C6B8] bg-[#BBA27E] p-6 text-center shadow-sm transition-shadow hover:shadow-md"
             >
               <div
-                className="mx-auto flex h-14 w-14 items-center justify-center rounded-full"
-                style={{ backgroundColor: 'rgba(201,168,76,0.1)' }}
+                className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#108E81]/10"
               >
-                <Icon className="h-6 w-6 text-[#C9A84C]" />
+                <Icon className="h-6 w-6 text-[#108E81]" />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-gray-900">{title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-gray-500">{description}</p>
+              <h3 className="mt-4 text-lg font-semibold text-[#134645]">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#134645]">{description}</p>
             </div>
           ))}
         </div>

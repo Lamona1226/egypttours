@@ -7,5 +7,5 @@ interface CardProps {
 }
 
 export function Card({ children, className }: CardProps): JSX.Element {
-  return <div className={cn('rounded-lg border border-slate-200 bg-white p-4 shadow-sm', className)}>{children}</div>;
+  return <div className={cn('rounded-lg border border-[#D2C6B8] bg-[#BBA27E] p-4 shadow-sm', className)}>{children}</div>;
 }

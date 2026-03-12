@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import TourFilter from '@/components/tours/TourFilter';
 import TourGrid from '@/components/tours/TourGrid';
 import { Tour } from '@/types';
@@ -9,8 +10,9 @@ interface ToursListingProps {
   tours: Tour[];
 }
 
-export default function ToursListing({ tours }: ToursListingProps) {
-  const [filter, setFilter] = useState('All');
+function ToursGridContent({ tours, loading }: { tours: Tour[], loading: boolean }) {
+  const searchParams = useSearchParams();
+  const filter = searchParams.get('category') || 'All';
 
   const filtered =
     filter === 'All'
@@ -20,9 +22,27 @@ export default function ToursListing({ tours }: ToursListingProps) {
         );
 
   return (
+    <div id="tour-grid">
+      <TourGrid tours={filtered} loading={loading} />
+    </div>
+  );
+}
+
+export default function ToursListing({ tours }: ToursListingProps) {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (tours && tours.length >= 0) {
+      setLoading(false);
+    }
+  }, [tours]);
+
+  return (
     <div className="space-y-8">
-      <TourFilter onFilterChange={setFilter} />
-      <TourGrid tours={filtered} />
+      <TourFilter />
+      <Suspense fallback={<div id="tour-grid"><TourGrid tours={tours} loading={true} /></div>}>
+        <ToursGridContent tours={tours} loading={loading} />
+      </Suspense>
     </div>
   );
 }

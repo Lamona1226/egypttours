@@ -18,9 +18,15 @@ export interface TourPackage {
   durationDays: number;
 }
 
-export interface BlogPost {
+export interface Article {
   id: string;
   slug: string;
   title: string;
-  content: string;
+  excerpt: string;
+  category: string;
+  author: string;
+  authorInitials: string;
+  readTime: number;
+  date: string;
+  tags: string[];
 }

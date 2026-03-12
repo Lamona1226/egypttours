@@ -4,8 +4,24 @@
 
 :root {
   color-scheme: light;
+  --color-primary: #108E81;
+  --color-primary-dark: #134645;
+  --color-accent: #BBA27E;
+  --color-success: #277971;
+  --color-border: #96A69E;
+  --color-bg-soft: #D2C6B8;
+  --color-text-muted: #53685E;
+  --color-bg-light: #F5F0EC;
 }
 
 body {
-  @apply bg-white text-slate-900;
+  @apply bg-[#F5F0EC] text-slate-900;
+}
+
+[dir='rtl'] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+[dir='rtl'] .ltr-only {
+  display: none;
 }

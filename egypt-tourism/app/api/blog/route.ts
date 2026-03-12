@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
+import { articles } from '@/lib/blogData';
 
 export async function GET(): Promise<NextResponse> {
-  return NextResponse.json([{ id: '1', slug: 'first-post', title: 'Your First Egypt Journey' }]);
+  return NextResponse.json({ articles });
 }

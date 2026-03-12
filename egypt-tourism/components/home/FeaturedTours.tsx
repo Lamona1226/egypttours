@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import {getTranslations} from 'next-intl/server';
 import TourCard from '@/components/tours/TourCard';
-import { Tour } from '@/types';
+import {Tour} from '@/types';
 
 const featured: Tour[] = [
   {
@@ -29,12 +30,16 @@ const featured: Tour[] = [
   },
 ];
 
-export default function FeaturedTours() {
+export default async function FeaturedTours() {
+  const t = await getTranslations('tours');
+
   return (
     <section className="mx-auto max-w-6xl px-4 py-16">
-      <h2 className="text-center text-3xl font-bold text-gray-900">Featured Tours</h2>
-      <p className="mx-auto mt-3 max-w-xl text-center text-gray-500">
-        Hand-picked experiences loved by thousands of travelers
+      <h2 className="text-center text-3xl font-bold text-[#134645]">
+        {t('title')}
+      </h2>
+      <p className="mx-auto mt-3 max-w-xl text-center text-[#53685E]">
+        {t('subtitle')}
       </p>
 
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -46,8 +51,8 @@ export default function FeaturedTours() {
       <div className="mt-10 text-center">
         <Link
           href="/tours"
-          className="inline-block rounded-md px-8 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-          style={{ backgroundColor: '#C9A84C' }}
+          className="inline-block rounded-md px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#277971]"
+          style={{ backgroundColor: '#108E81' }}
         >
           View All Tours
         </Link>

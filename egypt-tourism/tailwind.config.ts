@@ -12,9 +12,17 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          DEFAULT: '#C58B2A',
-          dark: '#8B611C'
-        }
+          sand: '#BBA27E',
+          teal: '#108E81',
+          dark: '#134645',
+          darkest: '#194033',
+          forest: '#53685E',
+          sage: '#96A69E',
+          sandLight: '#D2C6B8',
+          tealMid: '#277971',
+        },
+        'teal-accessible': '#0A6B61',
+        'sand-accessible': '#8B6A4A',
       }
     }
   },

@@ -95,16 +95,16 @@ export default function CustomTourForm() {
 
   if (submitted) {
     return (
-      <div className="rounded-xl border border-green-200 bg-green-50 p-8 text-center">
-        <MessageCircle className="mx-auto h-12 w-12 text-green-600" />
-        <h3 className="mt-4 text-xl font-bold text-green-800">Request Sent!</h3>
-        <p className="mt-2 text-sm text-green-700">
+      <div className="rounded-xl border border-[#277971] bg-[#277971]/10 p-8 text-center">
+        <MessageCircle className="mx-auto h-12 w-12 text-[#277971]" />
+        <h3 className="mt-4 text-xl font-bold text-[#277971]">Request Sent!</h3>
+        <p className="mt-2 text-sm text-[#277971]">
           Your custom trip request has been opened in WhatsApp. We&apos;ll craft your
           perfect itinerary and reply shortly.
         </p>
         <button
           onClick={() => setSubmitted(false)}
-          className="mt-6 text-sm font-medium text-green-700 underline hover:text-green-900"
+          className="mt-6 text-sm font-medium text-[#277971] underline hover:text-[#134645]"
         >
           Submit another request
         </button>
@@ -113,12 +113,12 @@ export default function CustomTourForm() {
   }
 
   const inputClass =
-    'w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]';
+    'w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-[#108E81] focus:ring-1 focus:ring-[#108E81]/20';
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+      className="space-y-6 rounded-xl border border-[#96A69E] bg-[#BBA27E] p-6 shadow-sm sm:p-8"
     >
       {/* Name / Email */}
       <div className="grid gap-5 sm:grid-cols-2">
@@ -164,12 +164,12 @@ export default function CustomTourForm() {
       <Field label="Destinations of Interest" error={errors.destinations?.message}>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {destinations.map((dest) => (
-            <label key={dest} className="flex items-center gap-2 text-sm text-gray-700">
+            <label key={dest} className="flex items-center gap-2 text-sm text-[#134645]">
               <input
                 type="checkbox"
                 value={dest}
                 {...register('destinations')}
-                className="h-4 w-4 rounded border-gray-300 text-[#C9A84C] accent-[#C9A84C]"
+                className="h-4 w-4 rounded border-gray-300 text-[#108E81] accent-[#108E81]"
               />
               {dest}
             </label>
@@ -181,12 +181,12 @@ export default function CustomTourForm() {
       <Field label="Tour Type" error={errors.tourTypes?.message}>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {tourTypes.map((type) => (
-            <label key={type} className="flex items-center gap-2 text-sm text-gray-700">
+            <label key={type} className="flex items-center gap-2 text-sm text-[#134645]">
               <input
                 type="checkbox"
                 value={type}
                 {...register('tourTypes')}
-                className="h-4 w-4 rounded border-gray-300 text-[#C9A84C] accent-[#C9A84C]"
+                className="h-4 w-4 rounded border-gray-300 text-[#108E81] accent-[#108E81]"
               />
               {type}
             </label>
@@ -226,7 +226,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-gray-700">{label}</label>
+      <label className="mb-1.5 block text-sm font-medium text-[#134645]">{label}</label>
       {children}
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>

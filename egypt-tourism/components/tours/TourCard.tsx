@@ -1,46 +1,63 @@
+'use client';
+
 import Link from 'next/link';
-import { Clock, Tag } from 'lucide-react';
-import { Tour } from '@/types';
+import {Clock, Tag} from 'lucide-react';
+import {Tour} from '@/types';
+import {useTranslations} from 'next-intl';
 
 interface TourCardProps {
   tour: Tour;
 }
 
-export default function TourCard({ tour }: TourCardProps) {
+export default function TourCard({tour}: TourCardProps) {
+  const t = useTranslations('tours');
+
   return (
-    <div className="group overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
-      <div className="relative flex h-48 items-center justify-center bg-amber-100 text-sm text-amber-400">
-        Tour Image
-        {tour.category && (
-          <span className="absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-semibold text-white" style={{ backgroundColor: '#C9A84C' }}>
-            {tour.category}
+    <Link
+      href={`/tours/${tour.slug}`}
+      className="group block"
+    >
+      <article className="cursor-pointer overflow-hidden rounded-xl border border-[#96A69E] bg-[#BBA27E] shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-[#108E81]/20">
+        <div className="relative flex h-48 items-center justify-center bg-amber-100 text-sm text-amber-400">
+          <span className="sr-only">
+            {tour.title} - {tour.category} tour in Egypt
           </span>
-        )}
-      </div>
-
-      <div className="p-5">
-        <h3 className="text-lg font-bold text-gray-900">{tour.title}</h3>
-        <p className="mt-2 line-clamp-2 text-sm text-gray-500">{tour.description}</p>
-
-        <div className="mt-4 flex items-center gap-4 text-sm text-gray-600">
-          <span className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
-            {tour.durationHours}h
-          </span>
-          <span className="flex items-center gap-1">
-            <Tag className="h-4 w-4" />
-            From ${tour.pricePerPerson}
-          </span>
+          Tour Image
+          {tour.category && (
+            <span
+              className="absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-semibold text-white"
+              style={{backgroundColor: '#108E81'}}
+            >
+              {tour.category}
+            </span>
+          )}
         </div>
 
-        <Link
-          href={`/tours/${tour.slug}`}
-          className="mt-5 inline-block rounded-md px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-          style={{ backgroundColor: '#C9A84C' }}
-        >
-          View Details
-        </Link>
-      </div>
-    </div>
+        <div className="p-5">
+          <h3 className="text-lg font-bold text-[#134645]">{tour.title}</h3>
+          <p className="mt-2 line-clamp-2 text-sm text-[#134645]">{tour.description}</p>
+
+          <div className="mt-4 flex items-center gap-4 text-sm text-[#134645]">
+            <span className="flex items-center gap-1">
+              <Clock className="h-4 w-4" />
+              {tour.durationHours} {t('hours')}
+            </span>
+            <span className="flex items-center gap-1">
+              <Tag className="h-4 w-4" />
+              <span className="font-bold text-[#108E81]">
+                {t('from')} ${tour.pricePerPerson} {t('per_person')}
+              </span>
+            </span>
+          </div>
+
+          <div
+            className="mt-5 inline-block rounded-md px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#134645]"
+            style={{backgroundColor: '#108E81'}}
+          >
+          {t('view_details')}
+          </div>
+        </div>
+      </article>
+    </Link>
   );
 }
