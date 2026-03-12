@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import HeroSection from '@/components/home/HeroSection';
+import { unstable_setRequestLocale } from 'next-intl/server';
 import TrustBar from '@/components/home/TrustBar';
 import FeaturedTours from '@/components/home/FeaturedTours';
 import WhyChooseUs from '@/components/home/WhyChooseUs';
@@ -13,7 +14,12 @@ export const metadata: Metadata = {
     'Expert-guided tours from Cairo to Aswan. Pay only when you arrive in Egypt.',
 };
 
-export default function Page(): JSX.Element {
+export default function Page({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): JSX.Element {
+  unstable_setRequestLocale(locale);
   return (
     <>
       <HeroSection />

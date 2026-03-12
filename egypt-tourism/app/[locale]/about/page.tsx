@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { MapPin, Users, Shield, Banknote } from 'lucide-react';
+import { unstable_setRequestLocale } from 'next-intl/server';
 
 export const metadata: Metadata = {
   title: 'About Us | Egypt Tour and Adventure',
@@ -36,7 +37,12 @@ const features = [
   },
 ];
 
-export default function Page() {
+export default function Page({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
+  unstable_setRequestLocale(locale);
   return (
     <div>
       {/* Hero Banner */}

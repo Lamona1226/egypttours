@@ -1,4 +1,4 @@
-import {getTranslations} from 'next-intl/server';
+import {getTranslations, unstable_setRequestLocale} from 'next-intl/server';
 import ServicesClient from './ServicesClient';
 
 export async function generateMetadata({
@@ -18,7 +18,12 @@ export async function generateMetadata({
   };
 }
 
-export default function ServicesPage() {
+export default function ServicesPage({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
+  unstable_setRequestLocale(locale);
   return <ServicesClient />;
 }
 

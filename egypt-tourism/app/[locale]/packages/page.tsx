@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import PageBanner from '@/components/shared/PageBanner';
+import { unstable_setRequestLocale } from 'next-intl/server';
 import PackageCard from '@/components/packages/PackageCard';
 import type {TourPackage} from '@/types';
 
@@ -38,7 +39,12 @@ const packages: TourPackage[] = [
   },
 ];
 
-export default function Page(): JSX.Element {
+export default function Page({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): JSX.Element {
+  unstable_setRequestLocale(locale);
   return (
     <div className="pb-16">
       <section className="mb-8">

@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import {getTranslations} from 'next-intl/server';
 
+export const dynamic = 'force-dynamic';
+
 export default async function NotFound() {
   const t = await getTranslations('not_found');
 

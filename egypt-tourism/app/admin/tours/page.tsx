@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Manage Tours | Egypt Tour and Adventure',
   description: 'Create and edit tours.',

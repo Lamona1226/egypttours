@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import PageBanner from '@/components/shared/PageBanner';
+import { unstable_setRequestLocale } from 'next-intl/server';
 import CustomTourForm from '@/components/custom-tour/CustomTourForm';
 
 export const metadata: Metadata = {
@@ -8,7 +9,12 @@ export const metadata: Metadata = {
     'Design a fully custom Egypt itinerary with help from our Egyptologist team — tailored to your dates, interests and budget.',
 };
 
-export default function Page(): JSX.Element {
+export default function Page({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): JSX.Element {
+  unstable_setRequestLocale(locale);
   return (
     <div className="pb-16">
       <section className="mb-8">

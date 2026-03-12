@@ -1,7 +1,7 @@
 'use client';
 
 import {useLocale} from 'next-intl';
-import {usePathname, useRouter} from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import {ChevronDown, Globe} from 'lucide-react';
 import {useEffect, useRef, useState} from 'react';
 
@@ -19,7 +19,6 @@ const LANGUAGES = [
 export default function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
-  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
 

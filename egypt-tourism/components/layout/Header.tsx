@@ -5,6 +5,7 @@ import {useState, useEffect, useRef} from 'react';
 import {Search} from 'lucide-react';
 import {useRouter, usePathname} from 'next/navigation';
 import {useLocale, useTranslations} from 'next-intl';
+import Image from 'next/image';
 import MobileNav from './MobileNav';
 import SearchBar, {searchTours, tourPath} from './SearchBar';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -69,10 +70,13 @@ export default function Header() {
           href={locale === 'en' ? '/' : `/${locale}`}
           className="group flex items-center gap-2 transition-opacity hover:opacity-90 md:gap-3"
         >
-          <img
+          <Image
             src="/images/Logo.png"
             alt="Egypt Tour and Adventure Logo"
+            width={64}
+            height={64}
             className="h-12 w-auto transition-transform duration-300 group-hover:scale-105 sm:h-14 lg:h-16"
+            priority
           />
           <div className="flex flex-col justify-center">
             <span className="text-sm font-black uppercase leading-none tracking-widest text-[#134645] sm:text-base lg:text-xl">

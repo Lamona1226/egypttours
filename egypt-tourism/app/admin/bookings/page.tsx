@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Manage Bookings | Egypt Tour and Adventure',
   description: 'Review and update booking requests.',

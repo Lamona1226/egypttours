@@ -1,5 +1,5 @@
 import type {Metadata} from 'next';
-import {getTranslations} from 'next-intl/server';
+import {getTranslations, unstable_setRequestLocale} from 'next-intl/server';
 import PageBanner from '@/components/shared/PageBanner';
 import BlogListingClient from '@/components/blog/BlogListingClient';
 import {articles} from '@/lib/blogData';
@@ -10,7 +10,12 @@ export const metadata: Metadata = {
     'Expert guides, hidden gems, and practical Egypt travel tips curated by our Egyptologist team.',
 };
 
-export default async function Page(): Promise<JSX.Element> {
+export default async function Page({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): Promise<JSX.Element> {
+  unstable_setRequestLocale(locale);
   const t = await getTranslations('blog');
   const sorted = [...articles].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),

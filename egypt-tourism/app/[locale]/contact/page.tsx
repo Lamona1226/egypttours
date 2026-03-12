@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import {MessageCircle, Mail, MapPin, Clock} from 'lucide-react';
+import {unstable_setRequestLocale} from 'next-intl/server';
 import PageBanner from '@/components/shared/PageBanner';
 import ContactForm from '@/components/contact/ContactForm';
 
@@ -35,7 +36,12 @@ const cards = [
   },
 ];
 
-export default function Page(): JSX.Element {
+export default function Page({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): JSX.Element {
+  unstable_setRequestLocale(locale);
   return (
     <div className="pb-16">
       <section className="mb-8">
