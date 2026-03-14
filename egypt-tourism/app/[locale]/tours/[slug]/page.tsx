@@ -4,46 +4,17 @@ import PageBanner from '@/components/shared/PageBanner';
 import Breadcrumb from '@/components/shared/Breadcrumb';
 import BookingForm from '@/components/booking/BookingForm';
 import TourTimeline from '@/components/tours/TourTimeline';
-import type {Tour} from '@/types';
-
-const tours: Tour[] = [
-  {
-    id: '1',
-    slug: 'giza-pyramids',
-    title: 'Giza Pyramids Tour',
-    description:
-      'Explore the Great Pyramids, the Sphinx, and the Valley Temple with an expert Egyptologist guide.',
-    pricePerPerson: 85,
-    durationHours: 8,
-    category: 'Historical',
-  },
-  {
-    id: '2',
-    slug: 'luxor-east-bank',
-    title: 'Luxor East Bank',
-    description: 'Visit the magnificent Karnak Temple and Luxor Temple on a guided full-day tour.',
-    pricePerPerson: 95,
-    durationHours: 7,
-    category: 'Historical',
-  },
-  {
-    id: '3',
-    slug: 'nile-felucca-sunset',
-    title: 'Nile Felucca Sunset',
-    description: 'Sail the Nile on a traditional felucca at sunset with tea and light refreshments included.',
-    pricePerPerson: 45,
-    durationHours: 3,
-    category: 'Cultural',
-  }
-];
+import { prisma } from '@/lib/prisma';
+import { unstable_setRequestLocale } from 'next-intl/server';
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{slug: string}>;
+  params: {slug: string};
 }): Promise<Metadata> {
-  const {slug} = await params;
-  const tour = tours.find((t) => t.slug === slug);
+  const tour = await prisma.tour.findUnique({
+    where: { slug: params.slug },
+  });
   if (!tour) return {title: 'Tour not found | Egypt Tour and Adventure'};
   return {
     title: `${tour.title} | Egypt Tour and Adventure`,
@@ -54,10 +25,13 @@ export async function generateMetadata({
 export default async function Page({
   params,
 }: {
-  params: Promise<{slug: string}>;
+  params: {locale: string, slug: string};
 }): Promise<JSX.Element> {
-  const {slug} = await params;
-  const tour = tours.find((t) => t.slug === slug);
+  unstable_setRequestLocale(params.locale);
+  const tour = await prisma.tour.findUnique({
+    where: { slug: params.slug },
+    include: { availability: true },
+  });
   if (!tour) notFound();
 
   const timelineItems =

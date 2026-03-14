@@ -1,48 +1,21 @@
+import { prisma } from '@/lib/prisma';
+import { unstable_setRequestLocale } from 'next-intl/server';
 import type {Metadata} from 'next';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import PageBanner from '@/components/shared/PageBanner';
 import Breadcrumb from '@/components/shared/Breadcrumb';
 import BookingForm from '@/components/booking/BookingForm';
-import type {TourPackage} from '@/types';
 
-const packages: TourPackage[] = [
-  {
-    id: 'p1',
-    slug: 'cairo-luxor-5-days',
-    title: 'Cairo & Luxor Explorer – 5 Days',
-    description:
-      'See the Pyramids, Egyptian Museum, Karnak and Luxor Temple with internal flights and guided visits included.',
-    pricePerPerson: 650,
-    durationDays: 5,
-  },
-  {
-    id: 'p2',
-    slug: 'egypt-explorer-7-days',
-    title: 'Egypt Highlights – 7 Days',
-    description:
-      'A balanced 7-day itinerary combining Cairo, Giza Plateau, Luxor and a Nile evening experience.',
-    pricePerPerson: 980,
-    durationDays: 7,
-  },
-  {
-    id: 'p3',
-    slug: 'nile-cruise-4-days',
-    title: 'Classic Nile Cruise – 4 Days',
-    description:
-      'Sail between Aswan and Luxor with visits to Kom Ombo, Edfu and the West Bank temples.',
-    pricePerPerson: 720,
-    durationDays: 4,
-  },
-];
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{slug: string}>;
+  params: {slug: string};
 }): Promise<Metadata> {
-  const {slug} = await params;
-  const pkg = packages.find((p) => p.slug === slug);
+  const pkg = await prisma.tourPackage.findUnique({
+    where: { slug: params.slug },
+  });
   if (!pkg) return {title: 'Package not found | Egypt Tour and Adventure'};
 
   return {
@@ -54,10 +27,12 @@ export async function generateMetadata({
 export default async function Page({
   params,
 }: {
-  params: Promise<{slug: string}>;
+  params: {locale: string, slug: string};
 }): Promise<JSX.Element> {
-  const {slug} = await params;
-  const pkg = packages.find((p) => p.slug === slug);
+  unstable_setRequestLocale(params.locale);
+  const pkg = await prisma.tourPackage.findUnique({
+    where: { slug: params.slug },
+  });
   if (!pkg) notFound();
 
   return (

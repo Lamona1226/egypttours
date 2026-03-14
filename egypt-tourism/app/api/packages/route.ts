@@ -1,5 +1,17 @@
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
-export async function GET(): Promise<NextResponse> {
-  return NextResponse.json([{ id: '1', slug: 'classic-egypt', title: 'Classic Egypt 7D' }]);
+export const dynamic = 'force-dynamic'; // Force dynamic rendering
+
+export async function GET() {
+  try {
+    const packages = await prisma.tourPackage.findMany({
+      where: { isActive: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    return NextResponse.json({ packages });
+  } catch (error) {
+    console.error('Packages API error:', error);
+    return NextResponse.json({ error: 'Failed to fetch packages' }, { status: 500 });
+  }
 }

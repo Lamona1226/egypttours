@@ -1,8 +1,9 @@
-import type {Metadata} from 'next';
-import {getTranslations, unstable_setRequestLocale} from 'next-intl/server';
+import { prisma } from '@/lib/prisma';
 import PageBanner from '@/components/shared/PageBanner';
 import BlogListingClient from '@/components/blog/BlogListingClient';
-import {articles} from '@/lib/blogData';
+import { formatBlogPostToArticle } from '@/lib/blog-utils'; // Import the utility function
+import type { Metadata } from 'next';
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 
 export const metadata: Metadata = {
   title: 'Egypt Travel Blog | Egypt Tour and Adventure',
@@ -17,9 +18,12 @@ export default async function Page({
 }): Promise<JSX.Element> {
   unstable_setRequestLocale(locale);
   const t = await getTranslations('blog');
-  const sorted = [...articles].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
+  const blogPosts = await prisma.blogPost.findMany({
+    where: { published: true },
+    orderBy: { publishedAt: 'desc' },
+  });
+
+  const articles = blogPosts.map(formatBlogPostToArticle);
 
   return (
     <div className="pb-16">
@@ -30,8 +34,7 @@ export default async function Page({
         />
       </section>
 
-      <BlogListingClient articles={sorted} />
+      <BlogListingClient articles={articles} />
     </div>
   );
 }
-

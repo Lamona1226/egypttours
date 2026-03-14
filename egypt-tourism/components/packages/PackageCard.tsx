@@ -1,6 +1,7 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
-import { TourPackage } from '@/types';
+import { TourPackage } from '@prisma/client';
 
 interface PackageCardProps {
   pkg: TourPackage;
@@ -8,11 +9,36 @@ interface PackageCardProps {
 
 export default function PackageCard({ pkg }: PackageCardProps): JSX.Element {
   return (
-    <Card>
-      <h3 className="text-lg font-semibold">{pkg.title}</h3>
-      <p className="text-sm text-[#134645]">{pkg.description}</p>
-      <p className="mt-2 text-sm">{pkg.durationDays} days · ${pkg.pricePerPerson}</p>
-      <Link href={`/packages/${pkg.slug}`} className="text-[#108E81] hover:text-[#277971]">View package</Link>
-    </Card>
+    <Link
+      href={`/packages/${pkg.slug}`}
+      className="group block"
+    >
+      <Card className="cursor-pointer overflow-hidden rounded-xl border border-[#96A69E] bg-[#BBA27E] shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-[#108E81]/20">
+        <div className="relative h-52 overflow-hidden">
+          <Image
+            src={pkg.images?.[0] ?? 'https://images.unsplash.com/photo-1539650116574-75c0c6d73d0d?w=800'}
+            alt={pkg.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </div>
+        <div className="p-5">
+          <h3 className="text-lg font-bold text-[#134645]">{pkg.title}</h3>
+          <p className="mt-2 line-clamp-2 text-sm text-[#134645]">{pkg.description}</p>
+          <div className="mt-4 flex items-center gap-4 text-sm text-[#134645]">
+            <span className="font-bold text-[#108E81]">
+              From ${pkg.pricePerPerson} per person
+            </span>
+          </div>
+          <div
+            className="mt-5 inline-block rounded-md px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#134645]"
+            style={{backgroundColor: '#108E81'}}
+          >
+            View Details
+          </div>
+        </div>
+      </Card>
+    </Link>
   );
 }
